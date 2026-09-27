@@ -9,6 +9,11 @@ const withPWA = withPWAInit({
 });
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  experimental: {
+    // Allow importing TS files from outside the apps/web directory (shared/types)
+    externalDir: true,
+  },
+};
 
 export default withPWA(nextConfig);
