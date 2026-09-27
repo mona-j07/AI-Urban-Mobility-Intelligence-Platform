@@ -4,6 +4,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { OfflineIndicator } from "@/components/pwa/OfflineIndicator";
+import { Navbar } from "@/components/nav/Navbar";
+import { BottomNav } from "@/components/nav/BottomNav";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -48,7 +50,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <OfflineIndicator />
-        {children}
+        <Navbar />
+        <main className="min-h-screen pt-14 pb-16 md:pb-0 px-4 md:px-6">
+          {children}
+        </main>
+        <BottomNav />
       </body>
     </html>
   );
