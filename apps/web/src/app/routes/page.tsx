@@ -1,11 +1,5 @@
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-
-const mockRoutes = [
-  { number: "21G", name: "Tambaram – Thiruvanmiyur (OMR)", type: "BUS" as const },
-  { number: "23C", name: "Kelambakkam – Marina Beach", type: "BUS" as const },
-  { number: "M1", name: "Chennai Airport – Washermanpet", type: "METRO" as const },
-];
+import { RouteCard } from "@/components/transport/RouteCard";
+import { mockRoutes } from "@/lib/mocks";
 
 export default function RoutesPage() {
   return (
@@ -13,18 +7,8 @@ export default function RoutesPage() {
       <h1 className="text-2xl font-bold">Routes</h1>
 
       <div className="space-y-3">
-        {mockRoutes.map((r) => (
-          <Card key={r.number}>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base">{r.number}</CardTitle>
-                <Badge variant={r.type === "METRO" ? "default" : "secondary"}>
-                  {r.type}
-                </Badge>
-              </div>
-              <CardDescription>{r.name}</CardDescription>
-            </CardHeader>
-          </Card>
+        {mockRoutes.map((route) => (
+          <RouteCard key={route.id} route={route} />
         ))}
       </div>
     </div>
