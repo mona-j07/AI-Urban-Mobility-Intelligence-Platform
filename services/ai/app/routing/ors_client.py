@@ -44,7 +44,7 @@ async def get_directions(
     so the caller never has to handle exceptions.
     """
     if not MAP_API_KEY:
-        print("⚠  MAP_API_KEY not set — returning fallback directions")
+        print("[WARN] MAP_API_KEY not set -- returning fallback directions")
         return _FALLBACK
 
     try:
@@ -63,7 +63,7 @@ async def get_directions(
             resp = await client.post(ORS_DIRECTIONS_URL, json=body, headers=headers)
 
         if resp.status_code != 200:
-            print(f"⚠  ORS returned {resp.status_code}: {resp.text[:200]}")
+            print(f"[WARN] ORS returned {resp.status_code}: {resp.text[:200]}")
             return _FALLBACK
 
         data = resp.json()
@@ -76,5 +76,5 @@ async def get_directions(
         }
 
     except Exception as e:
-        print(f"⚠  ORS directions failed: {e}")
+        print(f"[WARN] ORS directions failed: {e}")
         return _FALLBACK

@@ -32,6 +32,6 @@ async def chat(req: ChatRequest):
         options = get_travel_plan_ai(req.message)
         return ChatResponse(options=options, source="ai")
     except Exception as e:
-        print(f"⚠  AI travel plan failed, using fallback: {e}")
+        print(f"[WARN] AI travel plan failed, using fallback: {e}")
         options = get_travel_plan(req.message)
         return ChatResponse(options=options, source="fallback")

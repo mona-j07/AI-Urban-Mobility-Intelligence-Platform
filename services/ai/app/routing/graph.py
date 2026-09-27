@@ -55,11 +55,11 @@ try:
             data = json.load(f)
         if isinstance(data, list) and len(data) > 0:
             _adjacency = _build_adjacency(data)
-            print(f"📊 Graph loaded from {_DEMO_PATH}: {len(_adjacency)} node(s)")
+            print(f"[GRAPH] Loaded from {_DEMO_PATH}: {len(_adjacency)} node(s)")
         else:
-            print("📊 routes.json is empty — graph will be built on first request")
+            print("[GRAPH] routes.json is empty -- graph will be built on first request")
 except Exception as e:
-    print(f"⚠  Could not load routes.json: {e}")
+    print(f"[WARN] Could not load routes.json: {e}")
 
 
 def ensure_graph():
@@ -72,9 +72,9 @@ def ensure_graph():
         from app.services.transport import get_all_route_stops
         data = get_all_route_stops()
         _adjacency = _build_adjacency(data)
-        print(f"📊 Graph built from Supabase: {len(_adjacency)} node(s)")
+        print(f"[GRAPH] Built from Supabase: {len(_adjacency)} node(s)")
     except Exception as e:
-        print(f"⚠  Could not build graph from Supabase: {e}")
+        print(f"[WARN] Could not build graph from Supabase: {e}")
 
 
 def shortest_path(origin_stop_id: str, dest_stop_id: str) -> list[dict] | None:
