@@ -28,7 +28,8 @@ export function useVehicles(): UseVehiclesReturn {
           .order("updated_at", { ascending: false });
 
         if (fetchErr) {
-          setError(fetchErr.message);
+          console.warn("[useVehicles] Fetch error:", fetchErr.message);
+          setError("Live vehicle data unavailable — using simulated data");
           setLoading(false);
           return;
         }
@@ -70,7 +71,13 @@ export function useVehicles(): UseVehiclesReturn {
           });
         }
       )
-      .subscribe();
+      .subscribe((status, err) => {
+        if (status === "CHANNEL_ERROR") {
+          // Realtime subscription failed (e.g. table not in publication).
+          // Log it but don't block the UI — the initial REST fetch still works.
+          console.warn("[useVehicles] Realtime subscription error:", err?.message ?? status);
+        }
+      });
 
     // 3. Cleanup
     return () => {

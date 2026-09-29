@@ -4,15 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
-  Home, Search, Navigation, MapPin, Bot,
+  Home, Search, Navigation, MapPin, Bot, LayoutDashboard,
 } from "lucide-react";
 
 const links = [
-  { href: "/", label: "Home", icon: Home },
-  { href: "/search", label: "Search", icon: Search },
-  { href: "/tracking", label: "Track", icon: Navigation },
-  { href: "/planner", label: "Plan", icon: MapPin },
-  { href: "/ai", label: "AI", icon: Bot },
+  { href: "/",          label: "Home",  icon: Home            },
+  { href: "/tracking",  label: "Track", icon: Navigation       },
+  { href: "/planner",   label: "Plan",  icon: MapPin           },
+  { href: "/ai",        label: "AI",    icon: Bot              },
+  { href: "/authority", label: "Auth",  icon: LayoutDashboard  },
 ];
 
 export function BottomNav() {

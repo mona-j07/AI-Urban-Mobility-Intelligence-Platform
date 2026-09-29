@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { VehicleCard } from "@/components/transport/VehicleCard";
 import { LiveStatusBadge } from "@/components/transport/LiveStatusBadge";
 import { useVehicles } from "@/hooks/useVehicles";
+import { useVehicleNames } from "@/hooks/useVehicleNames";
 import { getRouteDirections } from "@/lib/ors";
 import { mockRoutes, mockVehicles as fallbackVehicles, mockPositions as fallbackPositions } from "@/lib/mocks";
 import type { VehiclePosition } from "@shared/types";
@@ -21,11 +22,28 @@ const TransportMap = dynamic(
 
 export default function TrackingPage() {
   const { vehicles: livePositions, loading, error } = useVehicles();
+  const vehicleNames = useVehicleNames();
   const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
   const [routeGeometry, setRouteGeometry] = useState<[number, number][] | undefined>();
 
   // Use live data if available, otherwise fall back to mocks
   const positions: VehiclePosition[] = livePositions.length > 0 ? livePositions : fallbackPositions;
+
+  // Build a display-name map: vehicle_id → vehicle_number
+  const vehicleNameMap = useMemo(() => {
+    const map = new Map<string, string>();
+    // Merge names from Supabase vehicles table
+    for (const [id, name] of vehicleNames.entries()) {
+      map.set(id, name);
+    }
+    // Fill in from fallback mock vehicles for any missing
+    for (const v of fallbackVehicles) {
+      if (!map.has(v.id)) {
+        map.set(v.id, v.vehicle_number);
+      }
+    }
+    return map;
+  }, [vehicleNames]);
 
   // When a route is selected, fetch its road geometry
   useEffect(() => {
@@ -37,8 +55,8 @@ export default function TrackingPage() {
     // Use first and last stop coords for the selected route as endpoints
     const routePositions = positions.filter((p) => p.route_id === selectedRouteId);
     if (routePositions.length < 2) {
-      // Fallback: draw between two known stops
-      getRouteDirections(12.9249, 80.1000, 12.9823, 80.2641).then((r) => {
+      // Fallback: draw between SSN College and Marina Beach
+      getRouteDirections(12.7518, 80.1986, 13.0500, 80.2824).then((r) => {
         setRouteGeometry(r?.geometry);
       });
       return;
@@ -56,7 +74,7 @@ export default function TrackingPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Live Tracking</h1>
         {loading && <Badge variant="secondary">Loading...</Badge>}
-        {error && <Badge variant="destructive">Error: {error}</Badge>}
+        {error && <Badge variant="secondary" className="text-amber-700 border-amber-300 bg-amber-50">{error}</Badge>}
       </div>
 
       {/* Route filter */}
@@ -85,6 +103,7 @@ export default function TrackingPage() {
         <TransportMap
           vehicles={selectedRouteId ? positions.filter((p) => p.route_id === selectedRouteId) : positions}
           routeGeometry={routeGeometry}
+          vehicleNames={vehicleNameMap}
         />
       </Card>
 
@@ -98,7 +117,7 @@ export default function TrackingPage() {
           .map((pos) => {
             const vehicle = fallbackVehicles.find((v) => v.id === pos.vehicle_id) ?? {
               id: pos.vehicle_id,
-              vehicle_number: pos.vehicle_id.slice(0, 12),
+              vehicle_number: vehicleNameMap.get(pos.vehicle_id) ?? pos.vehicle_id.slice(0, 12),
               route_id: pos.route_id,
               vehicle_type: "BUS" as const,
               status: "ON_ROUTE" as const,

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
-  Home, Search, MapPin, Navigation, Route, Bot, Ticket,
+  Home, Search, MapPin, Navigation, Route, Bot, Ticket, LayoutDashboard,
 } from "lucide-react";
 
 const links = [
@@ -14,7 +14,8 @@ const links = [
   { href: "/tracking", label: "Tracking", icon: Navigation },
   { href: "/planner", label: "Planner", icon: MapPin },
   { href: "/ai", label: "AI", icon: Bot },
-  { href: "/tickets", label: "Tickets", icon: Ticket },
+  { href: "/tickets",   label: "Tickets",   icon: Ticket          },
+  { href: "/authority", label: "Authority", icon: LayoutDashboard },
 ];
 
 export function Navbar() {

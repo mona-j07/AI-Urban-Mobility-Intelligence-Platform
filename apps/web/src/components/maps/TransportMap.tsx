@@ -35,16 +35,18 @@ const metroIcon = L.divIcon({
   popupAnchor: [0, -16],
 });
 
-// SSN / OMR / Marina area center
-const DEFAULT_CENTER: [number, number] = [12.92, 80.15];
+// Midpoint of SSN College Kalavakkam ↔ Marina Beach corridor
+const DEFAULT_CENTER: [number, number] = [12.90, 80.23];
 const DEFAULT_ZOOM = 12;
 
 interface TransportMapProps {
   vehicles: VehiclePosition[];
   routeGeometry?: [number, number][];
+  /** Map of vehicle_id → vehicle_number for human-readable popup labels */
+  vehicleNames?: Map<string, string>;
 }
 
-export default function TransportMap({ vehicles, routeGeometry }: TransportMapProps) {
+export default function TransportMap({ vehicles, routeGeometry, vehicleNames }: TransportMapProps) {
   return (
     <MapContainer
       center={DEFAULT_CENTER}
@@ -57,7 +59,9 @@ export default function TransportMap({ vehicles, routeGeometry }: TransportMapPr
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
-      {vehicles.map((pos) => (
+      {vehicles.map((pos) => {
+        const displayName = vehicleNames?.get(pos.vehicle_id) ?? pos.vehicle_id.slice(0, 12);
+        return (
         <Marker
           key={pos.vehicle_id}
           position={[pos.latitude, pos.longitude]}
@@ -65,7 +69,7 @@ export default function TransportMap({ vehicles, routeGeometry }: TransportMapPr
         >
           <Popup>
             <div className="space-y-2 min-w-[180px]">
-              <div className="font-semibold text-sm">Vehicle {pos.vehicle_id.slice(0, 8)}...</div>
+              <div className="font-semibold text-sm">{displayName}</div>
               <LiveStatusBadge isSimulated={pos.is_simulated} />
               <div className="flex items-center gap-3 text-sm">
                 <ETA minutes={pos.eta_minutes ?? undefined} />
@@ -77,7 +81,8 @@ export default function TransportMap({ vehicles, routeGeometry }: TransportMapPr
             </div>
           </Popup>
         </Marker>
-      ))}
+        );
+      })}
 
       {routeGeometry && routeGeometry.length > 1 && (
         <Polyline
